@@ -1,4 +1,13 @@
-## [1.1.0] - 2026-05-14
+## [1.2.0] - 2026-05-14
+
+### Graphical User Interface (The Hub)
+* **Unified Listbook Interface:** Introduced the main modeless `FavoritesHubDialog`. Navigable via native first-letter routing across six dedicated views: Folders, Links, Snippets, CLIs, Macros, and a unified Tags dashboard.
+* **Global Hub Navigation:** Added global `1` through `6` numeric accelerators to instantly jump between category pages from anywhere within the dialog, bypassing standard tab-traversal delays.
+* **Quick-Pick Overlay:** Introduced a borderless, floating fuzzy-search dialog (`NVDA+Alt+Q`). It automatically centers on the active monitor, filters across all asset categories simultaneously, and seamlessly restores previous window focus upon closure.
+* **Contextual Data Management:** Implemented dedicated Add/Edit modal dialogs for each asset type, complete with rigorous input validation (e.g., URL scheme verification, CLI timeout clamping, and fail-fast gesture parsing for macros).
+* **Smart Tags View:** Added a split-pane Tags dashboard, allowing users to cross-reference workflows (e.g., viewing a local folder, a web link, and a text template simultaneously under a single project tag).
+* **Native Context Menus:** Integrated standard Win32 context menus (`Applications` key or `Shift+F10`) on all list items, featuring actions to Activate, Edit, Delete, Duplicate, and Copy values directly to the clipboard.
+* **Configuration Panel:** Registered a native NVDA Settings Panel under Preferences, allowing users to toggle delete-confirmation prompts and context-aware path capturing.## [1.1.0] - 2026-05-14
 
 ### Operational Engines (The Active Core)
 * **Context-Aware Folder Capture:** Introduced a highly optimized, COM-based path detection engine. The add-on can now instantly read the path of the currently active File Explorer window or standard Windows Open/Save dialog (enforcing a strict 500ms budget to guarantee zero screen-reader lag).

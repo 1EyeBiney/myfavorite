@@ -86,4 +86,125 @@ Created quickPick.py
 Starting: Create gui/entryDialogs.py (2/4). 4 items: Create gui/quickPick.py (completed); Create gui/entryDialogs.py (in-progress); Create gui/mainDialog.py (not-started); Update plugin __init__.py (not-started)
 Created entryDialogs.py
 Starting: Create gui/mainDialog.py (2/3). 3 items: Create gui/entryDialogs.py (completed); Create gui/mainDialog.py (in-progress); Update plugin __init__.py (not-started)
-Create File
+Created mainDialog.py
+Starting: Update plugin __init__.py (2/2). 2 items: Create gui/mainDialog.py (completed); Update plugin __init__.py (in-progress)
+Now update the plugin-level __init__.py to register the confspec, use the correct modeless/Frame show patterns, and wire macros.cancel() into terminate():
+Read __init__.py, lines 1 to 160
+Replacing 75 lines with 88 lines in __init__.py
+```
+```
+```
+```
+Now read the tail of
+__init__.py (/c:/nbs/myfavorite/addon/globalPlugins/favoritesHub/__init__.py)
+to make sure the last replacement closed cleanly:
+Read __init__.py, lines 130 to 175
+The file is clean.
+Completed: Update plugin __init__.py (2/2). 2 items: Create gui/mainDialog.py (completed); Update plugin __init__.py (completed)
+Let's verify the complete file tree is in place:
+Running Get-ChildItem -Recurse &quot;C:\nbs\myfavorite\addon\globalPlugins\favoritesHub&quot; -.... Get-ChildItem -Recurse "C:\nbs\myfavorite\addon\globalPlugins\favoritesHub" -File | Select-Object -ExpandProperty FullName
+Running Get-ChildItem -Path &quot;C:\nbs\myfavorite\addon\globalPlugins\favoritesHub&quot; -Rec.... Get-ChildItem -Path "C:\nbs\myfavorite\addon\globalPlugins\favoritesHub" -Recurse -Filter "*.py" | Select-Object FullName
+All 14 files are present. Step 3 is complete. Here is the full delivery summary:
+Step 3 — GUI Package: All 7 files +
+__init__.py (/c:/nbs/myfavorite/addon/globalPlugins/favoritesHub/__init__.py)
+updated
+**
+gui/__init__.py (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+** — Minimal package marker.
+**
+gui/widgets.py (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+— FavoritesListCtrl**
+wx.LC_REPORT | wx.LC_VIRTUAL | wx.LC_SINGLE_SEL (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:17)
+Parallel `_all_*` / `_filtered_*` lists; `_rebuild_filter()` runs a case-insensitive substring scan across all columns
+`set_entries(entries, row_factory)`, `apply_filter(text)`, `get_selected_entry()`, `select_entry_by_id()`, `move_selection(delta)`
+`OnGetItemText(item, col)` returns `""` safely on `IndexError`
+**
+gui/settingsPanel.py (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+—
+FavoritesHubSettingsPanel (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:70)
+**
+register_confspec() (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:34)
+runs at module-import time and is idempotent (guarded by if CONFIG_SECTION not in config.conf.spec)
+Two checkboxes wired to
+config.conf[CONFIG_SECTION] (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\constants.py:168)
+in makeSettings/onSave
+Wrapped in try/except so config read errors degrade gracefully
+**
+gui/tagsView.py (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+— TagsView**
+Horizontal sizer: left
+wx.ListBox (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:17)
+(tags, sorted) + right FavoritesListCtrl (Name, Category, Tags)
+`refresh(doc)` → `hydrate_document` → builds tag universe + entry list; preserves current tag selection
+`_dispatch_activate(key, entry)` is module-level so both `TagsView` and `_CategoryPage` share it; routes to `os.startfile`, `snippets.expand_and_copy`, `cli.execute`,
+macros.play (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:56)
+**
+gui/quickPick.py (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+—
+QuickPickFrame (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:131)
+**
+wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP | wx.BORDER_SIMPLE | wx.FRAME_FLOAT_ON_PARENT (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:17)
+Captures
+wx.Window.FindFocus() (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:17)
+before Show(); restores on _close()
+Centers on mouse's monitor via
+wx.Display.GetFromPoint(wx.GetMousePosition()) (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:17)
+`EVT_ACTIVATE` deactivation →
+wx.CallAfter(_on_deactivated_idle) (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:17)
+→ closes if still inactive
+`_update_results(query)` scores with `fuzzy.score(name)*2 + score(tags)`, limits to 100 results, sorts by score (or by name when query is empty)
+`singleton` class method; `_on_search_key_down` handles Up/Down/Enter/Escape without leaving the TextCtrl
+**
+gui/entryDialogs.py (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+— Five entry dialogs**
+`_BaseEntryDialog`: common fields (name, tags, notes), `guiHelper.BoxSizerHelper`, custom OK (validates before `EndModal`), Cancel via
+wx.ID_CANCEL (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:17)
+(Escape works automatically)
+`FolderEntryDialog`: path +
+wx.DirDialog (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:17)
+Browse + Capture button (hidden when contextCaptureEnabled=False)
+`LinkEntryDialog`: URL with scheme validation against `http://`, `https://`, `mailto:`
+`SnippetEntryDialog`: multiline body + token hint text
+`CliEntryDialog`: command, args (one per line), cwd, timeout `SpinCtrl`, shell checkbox with red warning label that shows/hides via `EVT_CHECKBOX`
+`MacroEntryDialog`: gestures (one per line), validates every gesture via `KeyboardInputGesture.fromName()` before accepting, delay `SpinCtrl`
+**
+gui/mainDialog.py (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+—
+FavoritesHubDialog (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:106)
+**
+show_singleton(parent, initial_page, prefill_path) (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:107)
+— raises existing instance or creates new; calls
+gui.mainFrame.prePopup() (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+on create, postPopup() on close
+Persists/restores `lastUsedTab` via `config.conf`
+wx.Listbook(style=wx.LB_LEFT) (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:17)
+with 5 _CategoryPage + 1 TagsView
+`_CategoryPage`: filter → `FavoritesListCtrl` → Add/Edit/Delete/Activate/Close; full context menu (Activate, Edit, Delete, Duplicate, Copy name, Copy value, Move to tab…); `EVT_CHAR_HOOK`-handled Delete/F2/Enter/Apps key on the ListCtrl
+`EVT_CHAR_HOOK` on dialog: `1`–`6` switch pages (suppressed in `TextCtrl`/`ComboBox`), `Escape` closes, all others skip
+**
+__init__.py (/c:/nbs/myfavorite/addon/globalPlugins/favoritesHub/__init__.py)
+updates**
+Added
+_register_confspec() (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:31)
+called first in
+__init__ (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:46)
+-
+_showHubDialog (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:103)
+→
+FavoritesHubDialog.show_singleton(gui.mainFrame) (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:106)
+(no more ShowModal)
+_showQuickPickDialog (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:128)
+→
+QuickPickFrame.show_singleton(gui.mainFrame) (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:131)
+(Frame, no modal)
+_captureFolderHere (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:154)
+→
+FavoritesHubDialog.show_singleton(..., prefill_path=path) (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:106)
+with correct module path (
+contextCapture (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:157)
+not context)
+terminate() (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:52)
+→ calls
+Created mainDialog.py
+macros.cancel() (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:56)
+before unregistering the settings panel
