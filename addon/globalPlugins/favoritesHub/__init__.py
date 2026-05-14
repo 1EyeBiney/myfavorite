@@ -28,6 +28,15 @@ from .constants import (
 addonHandler.initTranslation()
 
 
+def _register_confspec() -> None:
+	"""Register the favoritesHub config section spec before first access."""
+	try:
+		from .gui.settingsPanel import register_confspec
+		register_confspec()
+	except Exception as exc:
+		log.debugWarning("Favorites Hub: confspec registration failed: %s", exc)
+
+
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	"""Favorites Hub global plugin entry-point for NVDA 2026.1."""
 
@@ -36,11 +45,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def __init__(self) -> None:
 		super().__init__()
+		_register_confspec()  # must run before settings panel registers
 		self._registerSettingsPanel()
 		log.debug("Favorites Hub: GlobalPlugin initialised.")
 
 	def terminate(self) -> None:
 		"""Called by NVDA when the add-on is unloaded or NVDA is exiting."""
+		# Cancel any in-flight macro playback before unloading
+		try:
+			from . import macros
+			macros.cancel()
+		except Exception:
+			pass
 		self._unregisterSettingsPanel()
 		log.debug("Favorites Hub: GlobalPlugin terminated.")
 
@@ -85,18 +101,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		wx.CallAfter(self._showHubDialog)
 
 	def _showHubDialog(self) -> None:
-		"""Instantiate and show the main dialog (GUI-thread only)."""
+		"""Instantiate or raise the singleton main dialog (GUI-thread only)."""
 		try:
-			from .gui.mainDialog import FavoritesHubDialog  # type: ignore[import]
-			dlg = FavoritesHubDialog(gui.mainFrame)
-			gui.mainFrame.prePopup()
-			dlg.ShowModal()
-			gui.mainFrame.postPopup()
-		except ImportError:
-			# Main dialog not yet implemented; placeholder announcement.
+			from .gui.mainDialog import FavoritesHubDialog
+			FavoritesHubDialog.show_singleton(gui.mainFrame)
+		except Exception as exc:
+			log.error("Favorites Hub: could not open hub dialog: %s", exc)
 			import ui
-			# Translators: Spoken when the Favorites Hub dialog is not yet available
-			ui.message(_("Favorites Hub dialog is not yet available."))
+			# Translators: Spoken when the Favorites Hub dialog fails to open
+			ui.message(_("Favorites Hub dialog could not be opened."))
 
 	# ------------------------------------------------------------------
 	# Script: open Quick-Pick overlay (§6)
@@ -113,17 +126,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		wx.CallAfter(self._showQuickPickDialog)
 
 	def _showQuickPickDialog(self) -> None:
-		"""Instantiate and show the Quick-Pick overlay (GUI-thread only)."""
+		"""Instantiate or raise the singleton Quick-Pick overlay (GUI-thread only)."""
 		try:
-			from .gui.quickPick import QuickPickDialog  # type: ignore[import]
-			dlg = QuickPickDialog(gui.mainFrame)
-			gui.mainFrame.prePopup()
-			dlg.ShowModal()
-			gui.mainFrame.postPopup()
-		except ImportError:
+			from .gui.quickPick import QuickPickFrame
+			QuickPickFrame.show_singleton(gui.mainFrame)
+		except Exception as exc:
+			log.error("Favorites Hub: could not open quick-pick: %s", exc)
 			import ui
-			# Translators: Spoken when the Quick-Pick overlay is not yet available
-			ui.message(_("Favorites Hub Quick-Pick is not yet available."))
+			# Translators: Spoken when the Quick-Pick overlay fails to open
+			ui.message(_("Favorites Hub Quick-Pick could not be opened."))
 
 	# ------------------------------------------------------------------
 	# Script: capture current folder and add to Favorites (§8)
@@ -141,21 +152,23 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		wx.CallAfter(self._captureFolderHere)
 
 	def _captureFolderHere(self) -> None:
-		"""Perform context capture and show the Add dialog (GUI-thread only)."""
+		"""Perform context capture and open Add Folder pre-filled (GUI-thread only)."""
 		try:
-			from .context import capture_active_folder  # type: ignore[import]
-			from .gui.mainDialog import FavoritesHubDialog  # type: ignore[import]
-			path = capture_active_folder()
+			from .contextCapture import get_active_folder_path
+			from .gui.mainDialog import FavoritesHubDialog
+			path = get_active_folder_path()
 			if path:
-				dlg = FavoritesHubDialog(gui.mainFrame, prefillPath=path)
-				gui.mainFrame.prePopup()
-				dlg.ShowModal()
-				gui.mainFrame.postPopup()
+				FavoritesHubDialog.show_singleton(
+					gui.mainFrame,
+					initial_page=0,
+					prefill_path=path,
+				)
 			else:
 				import ui
 				# Translators: Spoken when no folder path could be detected
 				ui.message(_("No folder could be detected from the current window."))
-		except ImportError:
+		except Exception as exc:
+			log.error("Favorites Hub: capture folder error: %s", exc)
 			import ui
-			# Translators: Spoken when the capture feature is not yet available
+			# Translators: Spoken when the folder capture feature raises an error
 			ui.message(_("Folder capture is not yet available."))
