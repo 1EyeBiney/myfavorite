@@ -1,0 +1,12 @@
+PS C:\nbs\myfavorite> C:\Users\1eyeb\AppData\Local\Programs\Python\Python313\Scripts\scons.exe
+scons: Reading SConscript files ...
+ModuleNotFoundError: No module named 'markdown':
+  File "C:\nbs\myfavorite\SConstruct", line 29:
+    import buildVars  # NOQA: E402
+  File "C:\nbs\myfavorite\buildVars.py", line 4:
+    from site_scons.site_tools.NVDATool.typings import AddonInfo, BrailleTables, SymbolDictionaries
+  File "C:\nbs\myfavorite\site_scons\site_tools\NVDATool\__init__.py", line 29:
+    from .docs import md2html
+  File "C:\nbs\myfavorite\site_scons\site_tools\NVDATool\docs.py", line 5: 
+    import markdown
+PS C:\nbs\myfavorite> 

@@ -1,0 +1,138 @@
+INFO - __main__ (14:09:44.682) - MainThread (23088):
+Starting NVDA version 2026.1 AMD64
+INFO - core.main (14:09:44.726) - MainThread (23088):
+Config dir: D:\NVDA\userConfig
+INFO - config.ConfigManager._loadConfig (14:09:44.729) - MainThread (23088):
+Loading config: D:\NVDA\userConfig\nvda.ini
+INFO - core.main (14:09:45.734) - MainThread (23088):
+Windows version: Windows 11 25H2 (10.0.26200.8457) workstation AMD64
+INFO - core.main (14:09:45.735) - MainThread (23088):
+Using Python version 3.13.12 (tags/v3.13.12:1cbe481, Feb  3 2026, 18:22:25) [MSC v.1944 64 bit (AMD64)]
+INFO - core.main (14:09:45.736) - MainThread (23088):
+Using comtypes version 1.4.13
+INFO - core.main (14:09:45.743) - MainThread (23088):
+Using configobj version 5.1.0 with validate version 1.0.1
+INFO - NVDAHelperLocal (14:09:47.179) - MainThread (23088):
+Thread 23088, build\x86_64\localWin10\oneCoreSpeech.cpp, ocSpeech_initialize, 215:
+ocSpeech_initialize
+
+INFO - NVDAHelperLocal (14:09:47.180) - MainThread (23088):
+Thread 23088, build\x86_64\localWin10\oneCoreSpeech.cpp, OcSpeechState::activate, 89:
+Activating
+
+INFO - NVDAHelperLocal (14:09:47.383) - MainThread (23088):
+Thread 23088, build\x86_64\localWin10\oneCoreSpeech.cpp, preventEndUtteranceSilence_, 443:
+AppendedSilence supported
+
+INFO - synthDriverHandler.setSynth (14:09:47.409) - MainThread (23088):
+Loaded synthDriver oneCore
+INFO - mathPres.MathCAT.MathCAT.MathCAT.__init__ (14:09:47.435) - MainThread (23088):
+MathCAT 0.7.2 installed. Using rules dir: D:\NVDA\include\nvda-mathcat\assets\Rules
+INFO - core._setUpWxApp (14:09:47.452) - MainThread (23088):
+Using wx version 4.2.4 msw (phoenix) wxWidgets 3.2.8
+INFO - brailleInput.initialize (14:09:47.459) - MainThread (23088):
+Braille input initialized
+INFO - braille.initialize (14:09:47.459) - MainThread (23088):
+Using liblouis version 3.36.0
+INFO - braille.initialize (14:09:47.459) - MainThread (23088):
+Using pySerial version 3.5
+INFO - braille.BrailleHandler._setDisplay (14:09:47.471) - MainThread (23088):
+Loaded braille display driver 'noBraille', current display has 0 cells.
+INFO - core.main (14:09:48.013) - MainThread (23088):
+Java Access Bridge support initialized
+INFO - UIAHandler.UIAHandler.MTAThreadFunc (14:09:48.376) - UIAHandler.UIAHandler.MTAThread (25560):
+UIAutomation: IUIAutomation6
+WARNING - gui.__getattr__ (14:09:48.894) - MainThread (23088):
+Importing SettingsPanel from here is deprecated. Import SettingsPanel from gui.settingsDialogs instead. 
+Stack trace:
+  File "nvda.pyw", line 309, in <module>
+  File "core.pyc", line 919, in main
+  File "globalPluginHandler.pyc", line 33, in initialize
+  File "D:\NVDA\userConfig\addons\favoritesHub\globalPlugins\favoritesHub\__init__.py", line 48, in __init__
+    _register_confspec()  # must run before settings panel registers
+  File "D:\NVDA\userConfig\addons\favoritesHub\globalPlugins\favoritesHub\__init__.py", line 34, in _register_confspec
+    from .gui.settingsPanel import register_confspec
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1023, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "D:\NVDA\userConfig\addons\favoritesHub\globalPlugins\favoritesHub\gui\settingsPanel.py", line 63, in <module>
+    class FavoritesHubSettingsPanel(gui.SettingsPanel):
+  File "gui\__init__.pyc", line 122, in __getattr__
+ERROR - globalPluginHandler.initialize (14:09:48.895) - MainThread (23088):
+Error initializing global plugin <class 'globalPlugins.favoritesHub.GlobalPlugin'>
+Traceback (most recent call last):
+  File "globalPluginHandler.pyc", line 33, in initialize
+  File "D:\NVDA\userConfig\addons\favoritesHub\globalPlugins\favoritesHub\__init__.py", line 49, in __init__
+    self._registerSettingsPanel()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\NVDA\userConfig\addons\favoritesHub\globalPlugins\favoritesHub\__init__.py", line 71, in _registerSettingsPanel
+    gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'globalPlugins.favoritesHub.gui' has no attribute 'settingsDialogs'
+WARNING - gui.__getattr__ (14:09:48.916) - MainThread (23088):
+Importing SettingsPanel from here is deprecated. Import SettingsPanel from gui.settingsDialogs instead. 
+Stack trace:
+  File "nvda.pyw", line 309, in <module>
+  File "core.pyc", line 919, in main
+  File "globalPluginHandler.pyc", line 31, in initialize
+  File "globalPluginHandler.pyc", line 23, in listPlugins
+  File "importlib\__init__.pyc", line 88, in import_module
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1023, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "D:\NVDA\userConfig\addons\enhancedObjectNavigation\globalPlugins\enhancedObjectNavigation\__init__.py", line 89, in <module>
+    class EnhancedObjectNavigationSettingsPanel(gui.SettingsPanel):
+  File "gui\__init__.pyc", line 122, in __getattr__
+INFO - external:globalPlugins.audioManager.audioNavigator (14:09:48.987) - MainThread (23088):
+Current NVDA API version: (2026, 1). Target for new API: (2025, 1). Using new API: True
+INFO - external:globalPlugins.audioManager.audioNavigator.NVDAOutputDeviceNavigator.__init__ (14:09:48.997) - MainThread (23088):
+NVDA 2025.1+ detected. Initializing MMDevice-based navigator.
+INFO - core.main (14:09:49.000) - MainThread (23088):
+NVDA initialized
+INFO - globalCommands.script_navigatorObject_devInfo (14:16:28.457) - MainThread (23088):
+Developer info for navigator object:
+name: None
+role: PARAGRAPH
+processID: 16996
+roleText: None
+states: 
+isFocusable: False
+hasFocus: False
+Python object: <NVDAObjects.IAccessible.ia2Web.Ia2Web object at 0x000001A285F19350>
+Python class mro: (<class 'NVDAObjects.IAccessible.ia2Web.Ia2Web'>, <class 'NVDAObjects.IAccessible.IAccessible'>, <class 'NVDAObjects.window.Window'>, <class 'NVDAObjects.NVDAObject'>, <class 'documentBase.TextContainerObject'>, <class 'baseObject.ScriptableObject'>, <class 'baseObject.AutoPropertyObject'>, <class 'garbageHandler.TrackedObject'>, <class 'object'>)
+description: None
+location: RectLTWH(left=1104, top=875, width=982, height=54)
+value: ''
+TextInfo: <class 'NVDAObjects.IAccessible.IA2TextTextInfo'>
+appModule: AppModule(appModuleHandler, appName='chrome', processID=16996)
+appModule.productName: 'Google Chrome'
+appModule.productVersion: '148.0.7778.97'
+appModule.helperLocalBindingHandle: c_void_p(1798029048288)
+appModule.appArchitecture: 'AMD64'
+windowHandle: 197056
+windowClassName: 'Chrome_RenderWidgetHostHWND'
+windowControlID: 740
+windowStyle: 1445986304
+extendedWindowStyle: 32
+windowThreadID: 17012
+windowText: 'Chrome Legacy Window'
+displayText: ''
+IAccessibleObject: <POINTER(IAccessible2) ptr=0x1a2852fbe68 at 1a2864d8850>
+IAccessibleChildID: 0
+IAccessible event parameters: windowHandle=197056, objectID=-4, childID=-1997901
+IAccessible accName: None
+IAccessible accRole: ROLE_SYSTEM_GROUPING
+IAccessible accState:  (0)
+IAccessible accDescription: None
+IAccessible accValue: ''
+IAccessible2 windowHandle: 197056
+IAccessible2 uniqueID: -1997901
+IAccessible2 role: IA2_ROLE_PARAGRAPH
+IAccessible2 states: IA2_STATE_OPAQUE (1024)
+IAccessible2 attributes: 'display:block;tag:p;relevant:additions text;atomic:false;container-live:polite;container-relevant:additions text;container-atomic:false;container-busy:false;text-align:left;'
+IAccessible2 relations: 

@@ -1,4 +1,8 @@
-## [1.2.0] - 2026-05-14
+## [1.2.1] - 2026-05-14
+
+### Bug Fixes
+* **Initialization Crash:** Fixed a critical namespace collision where the add-on's internal `gui` package was accidentally shadowing NVDA's core `gui` module, preventing the add-on from loading into memory.
+* **Deprecation Updates:** Updated the Settings Panel implementation to inherit from `gui.settingsDialogs.SettingsPanel`, resolving an NVDA 2026.1 deprecation warning in the system log.## [1.2.0] - 2026-05-14
 
 ### Graphical User Interface (The Hub)
 * **Unified Listbook Interface:** Introduced the main modeless `FavoritesHubDialog`. Navigable via native first-letter routing across six dedicated views: Folders, Links, Snippets, CLIs, Macros, and a unified Tags dashboard.

@@ -1,0 +1,61 @@
+Thinking: Let me read both files first to understand their current state before making changes.
+Read __init__.py
+Read settingsPanel.py, lines 1 to 120
+Read settingsPanel.py, lines 120 to 140
+Replacing 39 lines with 39 lines in __init__.py
+```
+```
+```
+```
+Replacing 6 lines with 6 lines in settingsPanel.py
+```
+```
+```
+```
+Done. Let's verify the two key spots look correct:
+Searched for regex import gui|nvda_gui|gui\.mainFrame|gui\.settingsDialogs (**/addon/globalPlugins/favoritesHub/**/__init__.py), 8 results. Files: c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py
+Searched for regex import gui|SettingsPanel|gui\.settingsDialogs (**/addon/globalPlugins/favoritesHub/gui/settingsPanel.py), 11 results. Files: c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py, c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py
+Both changes are exactly right. Here's a summary of every line touched:
+**
+__init__.py (/c:/nbs/myfavorite/addon/globalPlugins/favoritesHub/__init__.py)
+** — 6 references updated:
+Line 16:
+import gui (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+→
+import gui as nvda_gui (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+Line 71:
+gui.settingsDialogs…append( (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+→
+nvda_gui.settingsDialogs…append( (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+Line 82–83:
+gui.settingsDialogs…remove( (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+→
+nvda_gui.settingsDialogs…remove( (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+Line 107:
+FavoritesHubDialog.show_singleton(gui.mainFrame) (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\mainDialog.py:621)
+→
+nvda_gui.mainFrame (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+Line 132:
+QuickPickFrame.show_singleton(gui.mainFrame) (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\quickPick.py:46)
+→
+nvda_gui.mainFrame (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+Line 162:
+gui.mainFrame (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+(in
+_captureFolderHere (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:154)
+) →
+nvda_gui.mainFrame (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+**
+settingsPanel.py (/c:/nbs/myfavorite/addon/globalPlugins/favoritesHub/gui/settingsPanel.py)
+** — 2 changes:
+import gui (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+→
+import gui.settingsDialogs (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:71)
+(the bare
+import gui (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\__init__.py:16)
+that triggered the deprecation path is gone;
+from gui import guiHelper (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py:22)
+is kept as-is since it is correct and doesn't trigger the warning)
+class FavoritesHubSettingsPanel(gui.SettingsPanel): (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py:63)
+→
+class FavoritesHubSettingsPanel(gui.settingsDialogs.SettingsPanel): (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\gui\settingsPanel.py:63)

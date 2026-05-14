@@ -1,0 +1,13 @@
+C:\Users\1eyeb\AppData\Local\Programs\Python\Python313\python.exe: No module named scons
+PS C:\nbs\myfavorite> python -m pip install scons
+Collecting scons
+  Downloading scons-4.10.1-py3-none-any.whl.metadata (9.7 kB)
+Downloading scons-4.10.1-py3-none-any.whl (4.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.1/4.1 MB 3.0 MB/s  0:00:01   
+Installing collected packages: scons
+Successfully installed scons-4.10.1
+[notice] A new release of pip is available: 25.2 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
+PS C:\nbs\myfavorite> python -m scons
+C:\Users\1eyeb\AppData\Local\Programs\Python\Python313\python.exe: No module named scons
+PS C:\nbs\myfavorite> 

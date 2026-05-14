@@ -13,7 +13,7 @@
 
 import addonHandler
 import globalPluginHandler
-import gui
+import gui as nvda_gui
 import wx
 from logHandler import log
 from scriptHandler import script
@@ -68,7 +68,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"""Register the Favorites Hub settings panel with the NVDA Settings dialog."""
 		try:
 			from .gui.settingsPanel import FavoritesHubSettingsPanel  # type: ignore[import]
-			gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(
+			nvda_gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(
 				FavoritesHubSettingsPanel
 			)
 		except ImportError:
@@ -79,8 +79,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"""Remove the Favorites Hub panel from the NVDA Settings dialog."""
 		try:
 			from .gui.settingsPanel import FavoritesHubSettingsPanel  # type: ignore[import]
-			if FavoritesHubSettingsPanel in gui.settingsDialogs.NVDASettingsDialog.categoryClasses:
-				gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(
+			if FavoritesHubSettingsPanel in nvda_gui.settingsDialogs.NVDASettingsDialog.categoryClasses:
+				nvda_gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(
 					FavoritesHubSettingsPanel
 				)
 		except ImportError:
@@ -104,7 +104,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"""Instantiate or raise the singleton main dialog (GUI-thread only)."""
 		try:
 			from .gui.mainDialog import FavoritesHubDialog
-			FavoritesHubDialog.show_singleton(gui.mainFrame)
+			FavoritesHubDialog.show_singleton(nvda_gui.mainFrame)
 		except Exception as exc:
 			log.error("Favorites Hub: could not open hub dialog: %s", exc)
 			import ui
@@ -129,7 +129,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"""Instantiate or raise the singleton Quick-Pick overlay (GUI-thread only)."""
 		try:
 			from .gui.quickPick import QuickPickFrame
-			QuickPickFrame.show_singleton(gui.mainFrame)
+			QuickPickFrame.show_singleton(nvda_gui.mainFrame)
 		except Exception as exc:
 			log.error("Favorites Hub: could not open quick-pick: %s", exc)
 			import ui
@@ -159,7 +159,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			path = get_active_folder_path()
 			if path:
 				FavoritesHubDialog.show_singleton(
-					gui.mainFrame,
+					nvda_gui.mainFrame,
 					initial_page=0,
 					prefill_path=path,
 				)

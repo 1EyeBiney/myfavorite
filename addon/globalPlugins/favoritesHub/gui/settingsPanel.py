@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import addonHandler
 import config
-import gui
+import gui.settingsDialogs
 import wx
 from gui import guiHelper
 from logHandler import log
@@ -60,7 +60,7 @@ register_confspec()
 # Settings panel
 # ---------------------------------------------------------------------------
 
-class FavoritesHubSettingsPanel(gui.SettingsPanel):
+class FavoritesHubSettingsPanel(gui.settingsDialogs.SettingsPanel):
     """NVDA Settings panel for the Favorites Hub add-on (§12)."""
 
     # Translators: Title of the Favorites Hub category in the NVDA Settings dialog

@@ -1,0 +1,19 @@
+PS C:\nbs\myfavorite> python -m pip install markdown
+Collecting markdown
+  Downloading markdown-3.10.2-py3-none-any.whl.metadata (5.1 kB)
+Downloading markdown-3.10.2-py3-none-any.whl (108 kB)
+Installing collected packages: markdown
+Successfully installed markdown-3.10.2
+[notice] A new release of pip is available: 25.2 -> 26.1.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
+3\Scripts\scons.exe
+scons: Reading SConscript files ...
+scons: done reading SConscript files.
+scons: Building targets ...
+Copy("addon\doc\en\readme.md", "readme.md")
+Generating addon\doc\en\readme.html
+Copy("addon\doc\style.css", "style.css")
+Generating manifest addon\manifest.ini
+Generating Addon favoritesHub-1.0.0.nvda-addon
+scons: done building targets.
+PS C:\nbs\myfavorite> 
