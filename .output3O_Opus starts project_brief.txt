@@ -1,0 +1,20 @@
+Thinking: I'll create a comprehensive project brief document in the workspace root to outline the project scope and requirements.
+Created project_brief.md
+Created
+project_brief.md (/c:/nbs/myfavorite/project_brief.md)
+at the workspace root. It is structured as an immutable, agent-ready specification covering:
+**§0–2** Target environment (NVDA 2026.1 / Py 3.13 / AMD64), packaging identity, exact module layout under `addon/globalPlugins/favoritesHub/`.
+**§3** JSON schema v1 — top-level shape, common fields, all five category-specific shapes (Folders, Links, Snippets, CLIs, Macros), plus the hard security boundary that forbids credential-like field names.
+**§4** Atomic-write protocol (`tmp` + `fsync` + `os.replace`), corrupt-file quarantine, in-process `RLock` discipline.
+**§5** Absolute thread-safety constraints (wx is GUI-thread-only, COM on main thread only, blocking I/O off-thread).
+**§6** Full UI spec — `wx.Listbook` with the six pages in fixed order, virtual `wx.ListCtrl` columns per category, the `1`–`6` accelerator behavior (with editable-control suppression), tab order, context menu items, Add/Edit dialogs, and the borderless Quick-Pick overlay with prior-focus restoration.
+**§7** Snippet token table and clipboard-paste-only v1 behavior.
+**§8** Context capture priority chain (Shell.Application → UIA address bar → desktop fallback) with a 500 ms budget.
+**§9–10** CLI subprocess rules (shell=False default, hard timeout) and macro playback rules (`wx.CallLater` not `time.sleep`).
+**§11** Script table with default gestures (`NVDA+Alt+F`, `NVDA+Alt+Q`), category constant, and the 1500 ms layered-gesture window.
+**§12** Minimal settings panel (two checkboxes + `lastUsedTab`), with the explicit rule that user content does *not* go into `config.conf`.
+**§13** Error-boundary matrix per layer.
+**§14–15** i18n requirements and manifest field values.
+**§16** 13-point acceptance checklist.
+**§17–18** Out-of-scope items and change-control rules.
+Ready for the implementation agent.

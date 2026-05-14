@@ -1,0 +1,48 @@
+Thinking: I don't see any current rewritten thinking or next thinking to process. Could you provide:
+1. The current rewritten thinking (if any)
+2. The next thinking that needs to be rewritten
+Once you share those, I'll rewrite the next thinking following the guidelines you've outlined.
+Architecture Review — "Favorites Hub" Global Plugin (NVDA 2026.1)
+1. Architectural Evaluation
+1.1 Interface — wx.Notebook
+Verdict: Solid, but consider `wx.Listbook` or `wx.Simplebook` + a category list.
+`wx.Notebook` works fine in NVDA 2026.1's wxPython 4.2.x and is well-announced by NVDA out of the box (role: tab control).
+**Risk:** Tabs are traversed with `Ctrl+Tab` / `Ctrl+PgUp/PgDn`. Power users of the NVDA add-on store have repeatedly preferred a left-side category list (Listbook) because it's first-letter navigable and fits the "Folders / Links / Snippets" mental model better than horizontal tabs.
+**Best practice:** Always parent dialogs to `gui.mainFrame` and instantiate via `wx.CallAfter` from script handlers — never directly in a `script_*` method. Use `gui.guiHelper.BoxSizerHelper` for consistent padding and label association (this is what NVDA's own dialogs use, and it ensures accessible label↔control pairing).
+1.2 Navigation — wx.ListBox for type-ahead
+Verdict: Works, but `wx.ListCtrl` (report mode, single-column or multi-column virtual) is the better long-term choice.
+`wx.ListBox` *does* support single-letter prefix search natively, but **multi-letter type-ahead with a reset timeout is NOT built in on wx.ListBox** on Windows — that behavior comes from the underlying Win32 listbox and is single-character with a short timeout. If you want true "type `doc`" → jumps to "Documents" routing, you'll get more reliable behavior from `wx.ListCtrl` with `LC_REPORT | LC_SINGLE_SEL | LC_VIRTUAL`, which honors Explorer-style multi-char type-ahead through `EVT_LIST_FIND_ITEM`.
+`wx.ListCtrl` also gives you free columns (Name | Path | Tag), sortable headers, and scales to thousands of entries via virtual mode — `wx.ListBox` does not virtualize and will stutter past ~5,000 items.
+NVDA reads both correctly; `wx.ListCtrl` reports as "list" with item count, which is actually richer feedback than `wx.ListBox`.
+1.3 Backend — JSON
+Verdict: Fine for the stated scope; use `config` module integration carefully.
+JSON in `globalVars.appArgs.configPath / "addons" / "favoritesHub" / "data.json"` (or better, alongside via `addonHandler.getCodeAddon().path` for read-only data and the user config dir for writable data) is appropriate.
+**Don't** store the user's data inside `config.conf` — NVDA's confspec is for *settings*, not arbitrary user content. Mixing them bloats `nvda.ini` and risks loss on profile switches.
+**Schema versioning is mandatory** from v1. Add a top-level `"schemaVersion": 1` so future migrations (Snippets → Templates with variables, Links → Bookmarks with folders) don't break existing users.
+**Atomic writes:** write to `data.json.tmp` then `os.replace()` — JSON corruption from a crash mid-write is the #1 complaint for this class of add-on.
+**Threading:** `json.dump` on a few hundred entries is microseconds; safe on the GUI thread. Network-path validation (`os.path.isdir(r"\\server\share")`) **is not** — that's a 30-second blocking SMB call. Defer all path existence checks to a `threading.Thread` or `concurrent.futures`.
+1.4 Automation — Context-Aware Adding from File Explorer
+Verdict: Feasible and high-value, but the right API matters.
+**Don't** parse the Explorer window title (localization-breaking, fails on "This PC", fails on library views).
+**Correct approach:** COM via `Shell.Application` →  `Windows()` collection → match `HWND` to the foreground window → read `.Document.Folder.Self.Path`. This is the documented method, returns a proper filesystem path for filesystem folders, and gracefully returns empty for special folders (Recycle Bin, Quick Access).
+64-bit consideration: Use `comtypes.client.CreateObject("Shell.Application")` — `comtypes` ships with NVDA. Avoid `pywin32`; it is **not** bundled and you'd have to vendor it.
+**Thread risk:** COM calls must be on a thread that has called `CoInitialize`. NVDA's main thread is already STA-initialized, so `wx.CallAfter` → COM call is safe. **Do not** call this from a background thread without initializing COM yourself.
+Also support: active **Open/Save common dialog** path (read the address bar via UIAutomation), and **Desktop focus** (return the desktop path). These cover ~95% of "where am I?" scenarios.
+1.5 Keybinds — @script decorator
+Verdict: Correct and idiomatic.
+Set `category` to a module-level constant (e.g., `# Translators: ... \n SCRIPT_CATEGORY = _("Favorites Hub")`) and assign `scriptCategory = SCRIPT_CATEGORY` on the `GlobalPlugin` class so all scripts group together in the Input Gestures dialog.
+`NVDA+Shift+F` collides with nothing in stock NVDA 2026.1, but **some popular add-ons use it** (e.g., older fork of Instant Translate). Worth picking a less-claimed default — `NVDA+Control+F` collides with Find. `NVDA+Alt+F` is currently clean. Either way, document the override path.
+Open-the-dialog scripts should **not** set `speakOnDemand=True` (the DevGuide explicitly warns against it for scripts that open dialogs).
+Add a layered command set via `inputCore.bindGesture` after the user presses the main hotkey — e.g., `NVDA+Shift+F` then `F` for Folders tab, `L` for Links, `S` for Snippets, similar to NVDA's own configuration profile gestures. This is a huge accessibility win.
+2. Top 3 Feature Expansions
+**Quick-Pick Overlay (Fuzzy Search)** — A single hotkey opens a borderless `wx.Dialog` with one `wx.TextCtrl` and a results `wx.ListCtrl` underneath. Typing filters across *all* tabs (folders, links, snippets) by name, tag, and path substring. Enter activates the top match. This is the "Alfred / Listary" pattern and is transformative for keyboard users — far faster than tabbing through a Notebook.
+**Tags + Smart Groups** — Add a `"tags": [...]` array to every JSON entry. Then a virtual "Tag" tab whose left pane lists tags and right pane lists matching entries across types. Users can have one "work" tag spanning a network folder, a Confluence URL, and an email-signature snippet — all reachable from one place. Cheap to implement on your existing JSON schema, massive workflow leverage.
+**Snippet Variables + Clipboard Paste** — Snippets containing tokens like `{{date}}`, `{{clipboard}}`, `{{cursor}}` get expanded at insertion time, then sent via `keyboardHandler.KeyboardInputGesture.fromName(...)` or pushed to the clipboard with `api.copyToClip(text, notify=True)`. With `{{cursor}}` you re-position the caret after paste using `SendInput`. This turns "Snippets" from a glorified bookmark list into a real text-expander tier feature, and it stays within the no-credential-storage boundary you set.
+(Honorable mention: per-entry launch commands — e.g., a folder entry can carry `"openWith": "code"` to open in VS Code instead of Explorer. Trivial via `subprocess.Popen` with `shell=False`.)
+3. Top 5 Clarifying Questions
+**Data location & portability.** Should `data.json` live in the user's NVDA config dir (per-user, follows NVDA profile, syncs with NVDA's portable copy) or in `%APPDATA%\FavoritesHub` (survives add-on reinstalls, shared across NVDA installations)? Related: do you want **import/export** to a single `.fhub` file from day one?
+**Activation model.** One global hotkey that opens the multi-tab dialog, or **separate hotkeys per type** (e.g., `NVDA+Shift+F` for folders, `NVDA+Shift+L` for links), *plus* the unified dialog? And: do you want the layered-gesture pattern (`NVDA+Shift+F` then a letter) I described in §1.5?
+**Folder activation behavior.** When the user activates a folder entry, should it (a) always open a new Explorer window, (b) reuse an existing Explorer window if one is open on that path, or (c) be user-configurable per entry? Same question for Links: default browser, or per-entry browser override?
+**Edit/Delete UX.** In-place editing on the `ListCtrl` row, a dedicated "Edit" button that opens a modal, or a context menu (`Applications` key / `Shift+F10`) with Edit/Delete/Duplicate/Move-to-tab? NVDA users tend to strongly prefer the context-menu pattern — confirm before we commit.
+**Settings panel scope.** What goes in the `gui.SettingsPanel` registered on `NVDASettingsDialog.categoryClasses`? Candidates: default browser, default folder-open behavior, confirm-before-delete, validate-paths-on-startup (off by default for network-folder users), max history items, fuzzy-search algorithm threshold. Knowing the surface lets me design the confspec correctly the first time and avoid a v2 migration.
+Ready to incorporate your answers into `project_brief.md` once you respond.

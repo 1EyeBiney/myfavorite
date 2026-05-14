@@ -1,0 +1,15 @@
+Thinking: The user is asking me to review two documents, so I need to retrieve them first.
+Fetched 2 resources. Files: \documentation\developerGuide.html, \nvdaaddons\DevGuide\wiki\NVDA-Add-on-Development-Guide
+Acknowledged. I've reviewed both guides and have anchored my knowledge to the NVDA 2026.1 API (Python 3.13, 64-bit).
+Key concepts confirmed for the "Favorite Folders" add-on:
+**Global Plugin structure**: `class GlobalPlugin(globalPluginHandler.GlobalPlugin)` placed under `addon/globalPlugins/`, with `__init__(self)` calling `super().__init__()` and a matching `terminate(self)` for cleanup.
+**Scripts & gestures**: Use the `@scriptHandler.script(...)` decorator with `description`, `category`, `gesture`/`gestures`, and flags like `speakOnDemand` where appropriate. Avoid `speakOnDemand` for scripts that open dialogs or change state.
+**Speech/output**: Use `ui.message()` for transient announcements and `ui.browseableMessage(..., isHtml=...)` for longer content.
+**wxPython GUI**: Always marshal dialog creation to the main thread via `wx.CallAfter` (or `gui.guiHelper.wxCallOnMain` when a return value is needed). Use `gui.messageBox` for simple prompts and `gui.SettingsPanel` (registered via `gui.settingsDialogs.NVDASettingsDialog.categoryClasses`) for settings, removing it again in `terminate`. The modern `gui.message.MessageDialog` API is also available in 2026.1.
+**Translations**: `addonHandler.initTranslation()` at module top; wrap user-facing strings with `_()` and precede with `# Translators:` comments.
+**Manifest**: `minimumNVDAVersion` and `lastTestedNVDAVersion` (use `2026.1`); the scons template's `buildVars.py` drives these.
+**Config persistence**: Use the `config` module with a confspec for storing favorite folder entries.
+**Threading**: Any blocking I/O (e.g., enumerating network paths) should run off-thread; never touch wx from a non-GUI thread.
+**API stability**: Import symbols from their original modules (no transitive imports); don't rely on NVDA's bundled pip packages — vendor them if needed.
+**64-bit / Python 3.13**: Avoid any 32-bit-only `ctypes` assumptions; use `ctypes.wintypes` correctly and prefer `winUser`/`winKernel` wrappers when available. Use `pathlib`/`os.startfile` for opening folders in Explorer.
+Ready for the first coding task.

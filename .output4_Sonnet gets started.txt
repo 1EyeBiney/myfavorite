@@ -1,0 +1,66 @@
+Thinking: Let me start by reading the project_brief.md and the existing buildVars.py to understand the full context before writing any code.
+Created 7 todos. 7 items: Read project_brief.md fully (in-progress); Read existing buildVars.py (not-started); Modify buildVars.py (not-started); Create constants.py (not-started); Create schema.py (not-started); Create storage.py (not-started); Create __init__.py stub (not-started)
+Read project_brief.md, lines 1 to 100
+Read project_brief.md, lines 100 to 220
+Read project_brief.md, lines 220 to 400
+Read project_brief.md, lines 400 to 477
+Read myfavorite
+Read buildVars.py, lines 1 to 80
+Starting: Modify buildVars.py (3/7). 7 items: Read project_brief.md fully (completed); Read existing buildVars.py (completed); Modify buildVars.py (in-progress); Create constants.py (not-started); Create schema.py (not-started); Create storage.py (not-started); Create __init__.py stub (not-started)
+Replacing 39 lines with 40 lines in buildVars.py
+```
+```
+```
+```
+Replacing 1 lines with 4 lines in buildVars.py
+```
+```
+```
+```
+Starting: Create constants.py (4/7). 7 items: Read project_brief.md fully (completed); Read existing buildVars.py (completed); Modify buildVars.py (completed); Create constants.py (in-progress); Create schema.py (not-started); Create storage.py (not-started); Create __init__.py stub (not-started)
+Created constants.py
+Starting: Create schema.py (5/7). 7 items: Read project_brief.md fully (completed); Read existing buildVars.py (completed); Modify buildVars.py (completed); Create constants.py (completed); Create schema.py (in-progress); Create storage.py (not-started); Create __init__.py stub (not-started)
+Created schema.py
+Starting: Create storage.py (6/7). 7 items: Read project_brief.md fully (completed); Read existing buildVars.py (completed); Modify buildVars.py (completed); Create constants.py (completed); Create schema.py (completed); Create storage.py (in-progress); Create __init__.py stub (not-started)
+Created storage.py
+Created schema.py
+Starting: Create __init__.py stub (7/7). 7 items: Read project_brief.md fully (completed); Read existing buildVars.py (completed); Modify buildVars.py (completed); Create constants.py (completed); Create schema.py (completed); Create storage.py (completed); Create __init__.py stub (in-progress)
+Now I need to check what constants are referenced in storage.py that need to exist in constants.py:
+Read constants.py, lines 1 to 120
+Read constants.py, lines 120 to 172
+Good —
+CONFIG_SECTION (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\constants.py:168)
+and all other constants exist. Now create __init__.py:
+Created __init__.py
+Completed: Create __init__.py stub (7/7). 7 items: Read project_brief.md fully (completed); Read existing buildVars.py (completed); Modify buildVars.py (completed); Create constants.py (completed); Create schema.py (completed); Create storage.py (completed); Create __init__.py stub (completed)
+Step 1 is complete. Here is a summary of everything created:
+Step 1 — Backend Foundation: All files written
+**
+schema.py (/c:/nbs/myfavorite/addon/globalPlugins/favoritesHub/schema.py)
+**
+`BaseEntry` dataclass with common fields (`id`, `name`, `tags`, `createdUtc`, `modifiedUtc`, `notes`), `validate()`, `to_dict()`, `touch()`, and `_base_kwargs()` for subclasses.
+`FolderEntry`, `LinkEntry`, `SnippetEntry`, `CliEntry`, `MacroEntry` — each with `from_dict()`, `to_dict()`, `validate()`.
+Security: `_strip_forbidden()` called on every `from_dict()`, logs a warning per stripped field.
+`LinkEntry.validate()` rejects anything that isn't `http://`, `https://`, or `mailto:`.
+`CliEntry.timeoutSec` and `MacroEntry.interStepDelayMs` are clamped to their constants-defined bounds.
+`openWith` and `browser` always forced to `None` (v2 reserved).
+`ENTRY_FACTORIES` dict for the storage dispatcher.
+**
+storage.py (/c:/nbs/myfavorite/addon/globalPlugins/favoritesHub/storage.py)
+**
+`load()`: absent file → fresh doc; future schema → notify + fresh doc; corrupt JSON → quarantine + notify + fresh doc.
+`save_atomic()`: `open(O_CREAT|O_TRUNC) → write → fsync → os.replace()`. Cleans up `.tmp` on failure.
+`mutating()` context manager: acquires `_lock`, loads if needed, yields doc, saves on clean exit.
+`_cached_doc` module-level cache; `invalidate_cache()` to force reload.
+`hydrate_document()` converts raw dicts → typed dataclasses.
+All error dialogs queued via `wx.CallAfter` so they're GUI-thread safe.
+**
+__init__.py (/c:/nbs/myfavorite/addon/globalPlugins/favoritesHub/__init__.py)
+**
+`GlobalPlugin` with
+scriptCategory = SCRIPT_CATEGORY (c:\nbs\myfavorite\addon\globalPlugins\favoritesHub\constants.py:137)
+.
+`__init__` registers the settings panel (graceful ImportError skip during bootstrap).
+`terminate()` deregisters the panel.
+Three `@script`-decorated stubs: `script_openHub` (NVDA+Alt+F), `script_openQuickPick` (NVDA+Alt+Q), `script_captureFolderHere` (unbound).
+All dialog launches deferred via `wx.CallAfter`; each gracefully falls back to `ui.message()` if the GUI module isn't yet present.
